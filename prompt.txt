@@ -1,0 +1,22 @@
+I need a python program that will do the following:
+
+Wait until there are no active live-migrations on the cluster.
+from-list is a list of openshift worker nodes with > 50% CPU utilization that are hosting kubevirt pods.
+to-list is a list of schedulable worker nodes with < 20% CPU utilization.
+
+Do the following a long as both from-list and to-list aren't empty
+{
+    low-node = member of to-list with lowest CPU usage
+    hot-node = member of from-list with highest CPU usage
+
+    hot-vms = list of VM pods on hot-node
+    {
+       hot-vm = a VM from hot-vms, which we remove from hot-vms
+       live-migrate hot-vm from hot-node so that the k8s scheduler can place it somewhere else
+       wait until the live-migration succeeds or fails
+    } repeat unless live migration is successful
+
+    wait until there are no active live-migrations on the cluster.
+    recompute from-list and to-list
+  }
+}
